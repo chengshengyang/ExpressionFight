@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_top_tab_height"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/top_tab_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="精选"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text_size" />
+
+        <TextView
+            android:id="@+id/top_tab_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="热门"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text_size" />
+
+        <TextView
+            android:id="@+id/top_tab_3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="最新"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text_size" />
+
+        <TextView
+            android:id="@+id/top_tab_4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="人物"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text_size" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/scrollbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_height_2"
+        android:layout_below="@id/linearLayout"
+        android:scaleType="matrix"
+        android:src="@drawable/ic_scroll_line" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scrollbar" />
+</RelativeLayout>

@@ -138,7 +138,7 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private void initShareElement() {
-        //setExitSharedElementCallback(mCallback);
+        setExitSharedElementCallback(mCallback);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

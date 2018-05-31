@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.view.View;
 import com.csy.fight.R;
 import com.csy.fight.constant.TagStatic;
 import com.csy.fight.entity.AlbumInfo;
+import com.csy.fight.main.adapter.AlbumAdapter;
 import com.csy.fight.main.fragment.AlbumFragment;
 import com.csy.fight.main.fragment.DiscoverFragment;
 import com.csy.fight.main.fragment.ExpressionFragment;
@@ -41,7 +43,7 @@ import butterknife.OnClick;
  */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        AlbumFragment.OnAlbumClickListener {
+        AlbumAdapter.OnAlbumItemClickListener {
 
     private final static String TAG = "MainActivity";
 
@@ -351,7 +353,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListClick(AlbumInfo albumInfo) {
+    public void onItemClick(AlbumAdapter.ViewHolder holder, AlbumInfo info, int position) {
         if (mFragmentManager != null) {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             hideFragments();
@@ -359,12 +361,19 @@ public class MainActivity extends AppCompatActivity
             mPhotoFragment = (PhotoFragment) mFragmentManager.findFragmentByTag(TagStatic.TAG_FRAGMENT_PHOTO + "");
             if (mPhotoFragment == null) {
                 mPhotoFragment = new PhotoFragment();
-                mPhotoFragment.setInfo(albumInfo);
+                mPhotoFragment.setInfo(info);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mPhotoFragment.setSharedElementEnterTransition(new PhotoTransition());
+//                    mPhotoFragment.setExitTransition(new Fade());
+//                    mPhotoFragment.setEnterTransition(new Fade());
+//                    mPhotoFragment.setSharedElementReturnTransition(new PhotoTransition());
+                }
 
-                transaction.add(R.id.fragment_content, mPhotoFragment, TagStatic.TAG_FRAGMENT_PHOTO + "");
+                transaction.addSharedElement(holder.getIv_album(), info.getPhotoList().get(position).getImagePath());
+                transaction.replace(R.id.fragment_content, mPhotoFragment, TagStatic.TAG_FRAGMENT_PHOTO + "");
                 transaction.addToBackStack(null);
             } else {
-                mPhotoFragment.setInfo(albumInfo);
+                mPhotoFragment.setInfo(info);
                 transaction.show(mPhotoFragment);
             }
 

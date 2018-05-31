@@ -7,13 +7,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.Images.Thumbnails;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.csy.fight.R;
@@ -37,21 +38,14 @@ import java.util.concurrent.Executors;
  */
 public class AlbumFragment extends BaseFragment {
 
-	private ListView mListView;
+	private RecyclerView mRecyclerView;
 	private List<AlbumInfo> mAlbumList;
 	private ProgressBar mProgressBar;
 	private AlbumAdapter mAdapter;
 	private Map<String, String> mThumbnailList = new HashMap<>();
 	private MainActivity mActivity;
-	private OnAlbumClickListener mOnAlbumClickListener;
+	private AlbumAdapter.OnAlbumItemClickListener mOnAlbumClickListener;
 
-	public interface OnAlbumClickListener {
-		/**
-		 * 相册列表点击事件
-		 * @param albumInfo
-		 */
-		 void onListClick(AlbumInfo albumInfo);
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +97,7 @@ public class AlbumFragment extends BaseFragment {
 			Cursor cursor = cr.query(Thumbnails.EXTERNAL_CONTENT_URI, projection, null, null, Thumbnails.DATA + " desc ");
 
 			if (cursor != null && cursor.getCount() > 0) {
-				mAlbumList = new ArrayList<AlbumInfo>();
+				mAlbumList = new ArrayList<>();
 				while (cursor.moveToNext()) {
 					@SuppressWarnings("unused")
 					int _id;
@@ -208,17 +202,17 @@ public class AlbumFragment extends BaseFragment {
 			super.onPostExecute(result);
 			mProgressBar.setVisibility(View.GONE);
 			if (getActivity() != null && mAlbumList != null) {
-				mAdapter = new AlbumAdapter(getActivity());
-				mAdapter.setList(mAlbumList);
-				mListView.setAdapter(mAdapter);
+				mAdapter.setAlbumList(mAlbumList);
+				mRecyclerView.setAdapter(mAdapter);
 			}
 		}
 	}
 
 	@Override
 	public void initView() {
-		mListView = mFragment.findViewById(R.id.album_lv);
+		mRecyclerView = mFragment.findViewById(R.id.album_lv);
 		mProgressBar = mFragment.findViewById(R.id.loading_photos_progressBar);
+		mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
 
 		mActionBar = mActivity.getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -227,18 +221,8 @@ public class AlbumFragment extends BaseFragment {
 
 	@Override
 	public void initEvent() {
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (mAdapter != null) {
-					AlbumInfo aInfo = (AlbumInfo) mAdapter.getItem(position);
-					if (mOnAlbumClickListener != null) {
-						mOnAlbumClickListener.onListClick(aInfo);
-					}
-				}
-			}
-		});
+        mAdapter = new AlbumAdapter(getActivity());
+		mAdapter.setAlbumItemClickListener(mOnAlbumClickListener);
 	}
 
 	@Override

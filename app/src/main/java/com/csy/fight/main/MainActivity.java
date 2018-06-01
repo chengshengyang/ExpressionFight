@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 transaction.addSharedElement(holder.getIv_album(), info.getPhotoList().get(position).getImagePath());
-                transaction.replace(R.id.fragment_content, mPhotoFragment, TagStatic.TAG_FRAGMENT_PHOTO + "");
+                transaction.add(R.id.fragment_content, mPhotoFragment, TagStatic.TAG_FRAGMENT_PHOTO + "");
                 transaction.addToBackStack(null);
             } else {
                 mPhotoFragment.setInfo(info);

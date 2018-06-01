@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -90,7 +91,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         String sSize = String.format(mPhotoCountFormat, aInfo.getPhotoList().size());
         holder.tv_count.setText(sSize);
 
-        holder.iv_album.setOnClickListener(new View.OnClickListener() {
+        holder.ll_contain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onItemClick(holder, aInfo, position);
@@ -109,6 +110,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.ll_contain) LinearLayout ll_contain;
         @BindView(R.id.album_iv) ImageView iv_album;
         @BindView(R.id.album_name_tv) TextView tv_name;
         @BindView(R.id.album_count_tv) TextView tv_count;

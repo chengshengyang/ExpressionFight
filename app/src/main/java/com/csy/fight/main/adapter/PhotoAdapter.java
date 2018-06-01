@@ -72,6 +72,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
     }
 
     public void setPhotoList(AlbumInfo albumInfo) {
+        this.mAlbumInfo = albumInfo;
         this.mPhotoList = albumInfo.getPhotoList();
         notifyDataSetChanged();
     }
@@ -94,6 +95,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 mListener.onGridItemClick(holder.ivPhoto, mAlbumInfo, holder.getAdapterPosition());
+            }
+        });
+
+        holder.ivPhoto.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mListener.onGridItemLongClick(v);
+                return true;
             }
         });
 

@@ -57,7 +57,7 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -156,6 +156,7 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
         super.onHiddenChanged(hidden);
         if (!hidden) {
             mActionBar.setTitle(mAlbumInfo.getAlbumName());
+            mActionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -172,6 +173,7 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
 
         mActionBar = mActivity.getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setHomeAsUpIndicator(R.drawable.ic_back_up);
         mActionBar.setTitle(mAlbumInfo.getAlbumName());
     }
 

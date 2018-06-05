@@ -5,16 +5,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.SharedElementCallback;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,8 +37,7 @@ import butterknife.OnClick;
  * @author chengshengyang
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        AlbumAdapter.OnAlbumItemClickListener {
+        implements AlbumAdapter.OnAlbumItemClickListener {
 
     private final static String TAG = "MainActivity";
 
@@ -61,12 +55,6 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawer;
-
-    @BindView(R.id.nav_view)
-    NavigationView navigationView;
 
     private FragmentManager mFragmentManager;
     private ExpressionFragment mExpressionFragment;
@@ -111,12 +99,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mFragmentManager = getSupportFragmentManager();
 
-        // 抽屜会占用setNavigationOnClickListener的监听，必须先设置
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
         // 设置返回按钮监听事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,12 +106,10 @@ public class MainActivity extends AppCompatActivity
                 if (mPhotoFragment != null && mPhotoFragment.isVisible()) {
                     showFragment(TagStatic.TAG_FRAGMENT_ALBUM);
                 } else if (mAlbumFragment != null && mAlbumFragment.isVisible()) {
-                    drawer.openDrawer(GravityCompat.START);
+                    finish();
                 }
             }
         });
-
-        navigationView.setNavigationItemSelectedListener(this);
 
         mPresenter = new MainPresenter(getApplicationContext());
 
@@ -138,23 +118,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mPhotoFragment != null && mPhotoFragment.isVisible()) {
+            showFragment(TagStatic.TAG_FRAGMENT_ALBUM);
+        } else if (mAlbumFragment != null && mAlbumFragment.isVisible()) {
+            finish();
         } else {
-            if (mPhotoFragment != null && mPhotoFragment.isVisible()) {
-                showFragment(TagStatic.TAG_FRAGMENT_ALBUM);
-            } else if (mAlbumFragment != null && mAlbumFragment.isVisible()) {
-                finish();
-            } else {
-                super.onBackPressed();
-            }
+            super.onBackPressed();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -170,30 +146,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @OnClick({R.id.tab_item_main_0, R.id.tab_item_main_1, R.id.tab_item_main_2,
@@ -361,7 +313,7 @@ public class MainActivity extends AppCompatActivity
             mPhotoFragment = (PhotoFragment) mFragmentManager.findFragmentByTag(TagStatic.TAG_FRAGMENT_PHOTO + "");
             if (mPhotoFragment == null) {
                 mPhotoFragment = new PhotoFragment();
-                mPhotoFragment.setInfo(info);
+                mPhotoFragment.setAlbumInfo(info);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                    mPhotoFragment.setSharedElementEnterTransition(new PhotoTransition());
 //                    mPhotoFragment.setExitTransition(new Fade());
@@ -373,7 +325,7 @@ public class MainActivity extends AppCompatActivity
                 transaction.add(R.id.fragment_content, mPhotoFragment, TagStatic.TAG_FRAGMENT_PHOTO + "");
                 transaction.addToBackStack(null);
             } else {
-                mPhotoFragment.setInfo(info);
+                mPhotoFragment.setAlbumInfo(info);
                 transaction.show(mPhotoFragment);
             }
 

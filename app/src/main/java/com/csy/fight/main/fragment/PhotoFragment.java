@@ -52,6 +52,7 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (MainActivity) activity;
+        mActionBar = mActivity.getSupportActionBar();
     }
 
     @Override
@@ -148,19 +149,21 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
 
     @Override
     public void setTitle() {
-        super.setTitle();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setTitle(mAlbumInfo.getAlbumName());
+        }
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            mActionBar.setTitle(mAlbumInfo.getAlbumName());
-            mActionBar.setDisplayHomeAsUpEnabled(true);
+            setTitle();
         }
     }
 
-    public void setInfo(AlbumInfo info) {
+    public void setAlbumInfo(AlbumInfo info) {
         this.mAlbumInfo = info;
         refresh();
     }
@@ -169,12 +172,9 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
     @Override
     public void initView() {
         ButterKnife.bind(this, mFragment);
-        initShareElement();
 
-        mActionBar = mActivity.getSupportActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
-        mActionBar.setHomeAsUpIndicator(R.drawable.ic_back_up);
-        mActionBar.setTitle(mAlbumInfo.getAlbumName());
+        initShareElement();
+        setTitle();
     }
 
     @Override

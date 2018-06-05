@@ -57,6 +57,7 @@ public class AlbumFragment extends BaseFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		mActivity = (MainActivity) activity;
+        mActionBar = mActivity.getSupportActionBar();
 		mOnAlbumClickListener = mActivity;
 	}
 
@@ -64,6 +65,7 @@ public class AlbumFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mFragment = inflater.inflate(R.layout.ablum_fragment, container, false);
 		initView();
+		setTitle();
 		return mFragment;
 	}
 
@@ -71,19 +73,13 @@ public class AlbumFragment extends BaseFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		initEvent();
-		AlbumAsync task = new AlbumAsync();
-		/**
-		 * 创建一个没有限制的线程池(Executors.newCachedThreadPool())，并提供给AsyncTask。
-		 * 这样这个AsyncTask实例就有了自己的线程池而不必使用AsyncTask默认的。
-		 */
-		task.executeOnExecutor(Executors.newCachedThreadPool(), 0);
 	}
 
 	@Override
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
-			mActionBar.setTitle(R.string.album_title);
+			setTitle();
 		}
 	}
 
@@ -133,99 +129,107 @@ public class AlbumFragment extends BaseFragment {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * 异步构建相册数据
-	 * 
-	 * @author chengsy
-	 *
-	 */
-	class AlbumAsync extends AsyncTask<Integer, Integer, Integer> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			mProgressBar.setVisibility(View.VISIBLE);
-		}
-
-		@Override
-		protected Integer doInBackground(Integer... params) {
-			getThumbnail();
-
-			ContentResolver cr = getActivity().getContentResolver();
-			String[] projection = { Media._ID, Media.BUCKET_ID, Media.BUCKET_DISPLAY_NAME, Media.DATA };
-			Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, projection, null, null, Media.DATE_MODIFIED + " desc ");
-
-			if (cursor != null && cursor.getCount() > 0) {
-				mAlbumList = new ArrayList<AlbumInfo>();
-				Map<String, AlbumInfo> idMap = new HashMap<String, AlbumInfo>();
-				while (cursor.moveToNext()) {
-					PhotoInfo pInfo = new PhotoInfo();
-					String s_ID = cursor.getString(0);
-					String s_Buck_ID = cursor.getString(1);
-					String sName = cursor.getString(2);
-					String sPath = cursor.getString(3);
-
-					pInfo.setImageID(s_ID);
-					pInfo.setThumbnailPath(mThumbnailList.get(s_ID));
-					pInfo.setImagePath(sPath);
-					pInfo.setImageURI("file://" + sPath);
-
-					File file = new File(sPath);
-					if (file.length() == 0) {
-						continue;
-					}
-					if (idMap.containsKey(s_Buck_ID)) {
-						idMap.get(s_Buck_ID).getPhotoList().add(pInfo);
-					} else {
-						List<PhotoInfo> mPhotoList = new ArrayList<PhotoInfo>();
-						mPhotoList.add(pInfo);
-
-						AlbumInfo aInfo = new AlbumInfo();
-						aInfo.setAlbumName(sName);
-						aInfo.setPhotoList(mPhotoList);
-						mAlbumList.add(aInfo);
-
-						idMap.put(s_Buck_ID, aInfo);
-					}
-				}
-			}
-			return null;
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			super.onProgressUpdate(values);
-		}
-
-		@Override
-		protected void onPostExecute(Integer result) {
-			super.onPostExecute(result);
-			mProgressBar.setVisibility(View.GONE);
-			if (getActivity() != null && mAlbumList != null) {
-				mAdapter.setAlbumList(mAlbumList);
-				mRecyclerView.setAdapter(mAdapter);
-			}
-		}
-	}
-
 	@Override
 	public void initView() {
 		mRecyclerView = mFragment.findViewById(R.id.album_lv);
 		mProgressBar = mFragment.findViewById(R.id.loading_photos_progressBar);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-
-		mActionBar = mActivity.getSupportActionBar();
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setTitle(R.string.album_title);
 	}
 
 	@Override
 	public void initEvent() {
         mAdapter = new AlbumAdapter(getActivity());
 		mAdapter.setAlbumItemClickListener(mOnAlbumClickListener);
+
+
+        AlbumAsync task = new AlbumAsync();
+        /**
+         * 创建一个没有限制的线程池(Executors.newCachedThreadPool())，并提供给AsyncTask。
+         * 这样这个AsyncTask实例就有了自己的线程池而不必使用AsyncTask默认的。
+         */
+        task.executeOnExecutor(Executors.newCachedThreadPool(), 0);
 	}
 
 	@Override
-	public void refresh() {
+	public void setTitle() {
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setTitle(R.string.album_title);
+        }
 	}
+
+    /**
+     * 异步构建相册数据
+     *
+     * @author chengsy
+     *
+     */
+    class AlbumAsync extends AsyncTask<Integer, Integer, Integer> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Integer doInBackground(Integer... params) {
+            getThumbnail();
+
+            ContentResolver cr = getActivity().getContentResolver();
+            String[] projection = { Media._ID, Media.BUCKET_ID, Media.BUCKET_DISPLAY_NAME, Media.DATA };
+            Cursor cursor = cr.query(Media.EXTERNAL_CONTENT_URI, projection, null, null, Media.DATE_MODIFIED + " desc ");
+
+            if (cursor != null && cursor.getCount() > 0) {
+                mAlbumList = new ArrayList<AlbumInfo>();
+                Map<String, AlbumInfo> idMap = new HashMap<String, AlbumInfo>();
+                while (cursor.moveToNext()) {
+                    PhotoInfo pInfo = new PhotoInfo();
+                    String s_ID = cursor.getString(0);
+                    String s_Buck_ID = cursor.getString(1);
+                    String sName = cursor.getString(2);
+                    String sPath = cursor.getString(3);
+
+                    pInfo.setImageID(s_ID);
+                    pInfo.setThumbnailPath(mThumbnailList.get(s_ID));
+                    pInfo.setImagePath(sPath);
+                    pInfo.setImageURI("file://" + sPath);
+
+                    File file = new File(sPath);
+                    if (file.length() == 0) {
+                        continue;
+                    }
+                    if (idMap.containsKey(s_Buck_ID)) {
+                        idMap.get(s_Buck_ID).getPhotoList().add(pInfo);
+                    } else {
+                        List<PhotoInfo> mPhotoList = new ArrayList<PhotoInfo>();
+                        mPhotoList.add(pInfo);
+
+                        AlbumInfo aInfo = new AlbumInfo();
+                        aInfo.setAlbumName(sName);
+                        aInfo.setPhotoList(mPhotoList);
+                        mAlbumList.add(aInfo);
+
+                        idMap.put(s_Buck_ID, aInfo);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            mProgressBar.setVisibility(View.GONE);
+            if (getActivity() != null && mAlbumList != null) {
+                mAdapter.setAlbumList(mAlbumList);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        }
+    }
 }

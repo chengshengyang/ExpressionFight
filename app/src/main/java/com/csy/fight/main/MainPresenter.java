@@ -22,8 +22,6 @@ public class MainPresenter implements IMainContract.IPresenter {
     public void setView(IMainContract.IView view) {
         this.mMainView = view;
         mMainView.setPresenter(this);
-
-        mMainView.setTitle();
     }
 
     @Override

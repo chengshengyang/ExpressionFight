@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.csy.fight.R;
+import com.csy.fight.main.IMainContract;
 
 import butterknife.ButterKnife;
 
@@ -17,31 +18,56 @@ import butterknife.ButterKnife;
  * @author chengshengyang
  */
 
-public class MessageFragment extends BaseFragment {
+public class MessageFragment extends BaseFragment implements IMainContract.IView {
+
+    /**
+     * view必须持有presenter对象实例
+     */
+    protected IMainContract.IPresenter mPresenter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main_3, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        mFragment = inflater.inflate(R.layout.fragment_main_3, container, false);
+        initView();
+        return mFragment;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (isAdded()) {
-            mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        setTitle();
+    }
+
+    @Override
+    public void initView() {
+        ButterKnife.bind(this, mFragment);
+    }
+
+    @Override
+    public void setTitle() {
+        mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (isAdded() && mActionBar != null) {
+            mActionBar.setTitle(R.string.home_tab_message);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
             setTitle();
         }
     }
 
     @Override
-    public void initView() {
-
+    public void setPresenter(IMainContract.IPresenter presenter) {
+        this.mPresenter = presenter;
     }
 
     @Override
@@ -55,14 +81,6 @@ public class MessageFragment extends BaseFragment {
     }
 
     @Override
-    public void setTitle() {
-        if (mActionBar != null) {
-            mActionBar.setTitle(R.string.home_tab_message);
-        }
-    }
-
-    @Override
     public void refresh() {
-        super.refresh();
     }
 }

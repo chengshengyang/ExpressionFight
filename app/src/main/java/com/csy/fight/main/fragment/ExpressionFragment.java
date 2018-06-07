@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.csy.fight.R;
+import com.csy.fight.main.IMainContract;
 import com.csy.fight.main.adapter.HomePageAdapter;
 import com.csy.fight.util.DeviceUtils;
 
@@ -32,7 +33,7 @@ import butterknife.OnClick;
  * @author chengshengyang
  */
 
-public class ExpressionFragment extends BaseFragment {
+public class ExpressionFragment extends BaseFragment implements IMainContract.IView {
 
     @BindView(R.id.top_tab_1)
     TextView mTopTab1;
@@ -53,6 +54,11 @@ public class ExpressionFragment extends BaseFragment {
     private HomePageAdapter mHomePageAdapter;
     /** 当前页编号 */
     private int currIndex = 0;
+
+    /**
+     * view必须持有presenter对象实例
+     */
+    protected IMainContract.IPresenter mPresenter;
 
     @Nullable
     @Override
@@ -76,13 +82,13 @@ public class ExpressionFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isAdded()) {
-            mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             setTitle();
         }
     }
 
     @Override
     public void setTitle() {
+        mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (mActionBar != null) {
             mActionBar.setTitle(R.string.home_tab_expression);
         }
@@ -90,7 +96,7 @@ public class ExpressionFragment extends BaseFragment {
 
     @Override
     public void refresh() {
-        super.refresh();
+
     }
 
     @Override
@@ -205,5 +211,10 @@ public class ExpressionFragment extends BaseFragment {
 
     private void setCurrPage() {
         mViewPager.setCurrentItem(currIndex);
+    }
+
+    @Override
+    public void setPresenter(IMainContract.IPresenter presenter) {
+        this.mPresenter = presenter;
     }
 }

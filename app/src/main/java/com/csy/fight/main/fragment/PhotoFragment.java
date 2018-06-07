@@ -21,6 +21,7 @@ import android.view.animation.AnimationUtils;
 
 import com.csy.fight.R;
 import com.csy.fight.entity.AlbumInfo;
+import com.csy.fight.main.IMainContract;
 import com.csy.fight.main.MainActivity;
 import com.csy.fight.main.adapter.PhotoAdapter;
 import com.csy.fight.preview.PreviewActivity;
@@ -37,7 +38,8 @@ import butterknife.ButterKnife;
  *
  * @author chengsy
  */
-public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridClickListener {
+public class PhotoFragment extends BaseFragment
+        implements PhotoAdapter.OnGridClickListener, IMainContract.IView {
 
     @BindView(R.id.rv_album_list)
     RecyclerView mRecyclerView;
@@ -47,6 +49,11 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
 
     private MainActivity mActivity;
     private Bundle       mReenterState;
+
+    /**
+     * view必须持有presenter对象实例
+     */
+    protected IMainContract.IPresenter mPresenter;
 
     @Override
     public void onAttach(Activity activity) {
@@ -225,5 +232,10 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
     public void onGridItemLongClick(View v) {
         Animation animation = AnimationUtils.loadAnimation(mActivity, R.anim.normal_to_large);
         v.startAnimation(animation);
+    }
+
+    @Override
+    public void setPresenter(IMainContract.IPresenter presenter) {
+        this.mPresenter = presenter;
     }
 }

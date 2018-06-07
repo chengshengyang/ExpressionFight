@@ -26,12 +26,7 @@ public interface IPreviewContract {
         /**
          * 设置页面标题文字
          */
-        void setTitle();
-
-        /**
-         * 刷新页面内容
-         */
-        void refresh();
+        void getExtras();
 
         /**
          * 初始化布局 控件

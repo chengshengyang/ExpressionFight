@@ -34,7 +34,7 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  * @author csy
  */
-public class PreviewFragment extends BaseFragment {
+public class PreviewFragment extends BaseFragment implements IPreviewContract.IView {
 
     private static final String TAG = PreviewFragment.class.getSimpleName();
 
@@ -48,6 +48,7 @@ public class PreviewFragment extends BaseFragment {
     private int         mCurrentPosition;
     private int         mStartPosition;
     private AlbumInfo   mAlbumInfo;
+    private IPreviewContract.IPresenter mPresenter;
 
     public PreviewFragment() {
         // Required empty public constructor
@@ -78,79 +79,25 @@ public class PreviewFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Bundle bundle = getArguments();
-        mStartPosition = bundle.getInt(ARG_START_POSITION);
-        mCurrentPosition = bundle.getInt(ARG_CURRENT_POSITION);
-        mAlbumInfo = (AlbumInfo) bundle.getSerializable(ARG_ALBUM_INFO);
+        getExtras();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragment = inflater.inflate(R.layout.fragment_preview, container, false);
-        ButterKnife.bind(this, mFragment);
-
-        String imagePath = mAlbumInfo.getPhotoList().get(mCurrentPosition).getImagePath();
-        mPhotoView.setTransitionName(imagePath);
-        Glide.with(mContext)
-                .load(imagePath)
-                .fitCenter()
-                .dontAnimate()
-                .skipMemoryCache(false)
-                .listener(mRequestListener)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.drawable.ic_invoice_loading)
-                .error(R.drawable.ic_invoice_loading_error)
-                .into(mPhotoView);
-
-        if (mStartPosition == mCurrentPosition) {
-            getActivity().getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
-                @Override
-                public void onTransitionStart(Transition transition) {
-
-                }
-
-                @Override
-                public void onTransitionEnd(Transition transition) {
-//                    Animator animator = ViewAnimationUtils.createCircularReveal(
-//                            , , , , )
-                }
-
-                @Override
-                public void onTransitionCancel(Transition transition) {
-
-                }
-
-                @Override
-                public void onTransitionPause(Transition transition) {
-
-                }
-
-                @Override
-                public void onTransitionResume(Transition transition) {
-
-                }
-            });
-        }
+        initView();
+        initEvent();
         return mFragment;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+        // mvp数据接口调用测试
+        mPresenter.getData();
     }
 
     /**
@@ -209,7 +156,71 @@ public class PreviewFragment extends BaseFragment {
     };
 
     @Override
-    public void showProgress(boolean show) {
+    public void getExtras() {
+        Bundle bundle = getArguments();
+        mStartPosition = bundle.getInt(ARG_START_POSITION);
+        mCurrentPosition = bundle.getInt(ARG_CURRENT_POSITION);
+        mAlbumInfo = (AlbumInfo) bundle.getSerializable(ARG_ALBUM_INFO);
+    }
 
+    @Override
+    public void initView() {
+        ButterKnife.bind(this, mFragment);
+    }
+
+    @Override
+    public void initEvent() {
+        String imagePath = mAlbumInfo.getPhotoList().get(mCurrentPosition).getImagePath();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mPhotoView.setTransitionName(imagePath);
+        }
+
+        Glide.with(mContext)
+                .load(imagePath)
+                .fitCenter()
+                .dontAnimate()
+                .skipMemoryCache(false)
+                .listener(mRequestListener)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.ic_invoice_loading)
+                .error(R.drawable.ic_invoice_loading_error)
+                .into(mPhotoView);
+
+        if (mStartPosition == mCurrentPosition) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getActivity().getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+    //                    Animator animator = ViewAnimationUtils.createCircularReveal(
+    //                            , , , , )
+                    }
+
+                    @Override
+                    public void onTransitionCancel(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionPause(Transition transition) {
+
+                    }
+
+                    @Override
+                    public void onTransitionResume(Transition transition) {
+
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void setPresenter(IPreviewContract.IPresenter presenter) {
+        this.mPresenter = presenter;
     }
 }

@@ -41,6 +41,7 @@ public class PreviewActivity extends AppCompatActivity {
     private boolean         mIsReturning;
     private AlbumInfo       mAlbumInfo;
     private PreviewFragment mPreviewFragment;
+    private PreviewPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,8 @@ public class PreviewActivity extends AppCompatActivity {
                 mCurrentPosition = position;
             }
         });
+
+        mPresenter = new PreviewPresenter();
     }
 
     private class PreviewPagerAdapter extends FragmentStatePagerAdapter {
@@ -123,7 +126,9 @@ public class PreviewActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return PreviewFragment.newInstance(position, mStartPosition, mAlbumInfo);
+            mPreviewFragment = PreviewFragment.newInstance(position, mStartPosition, mAlbumInfo);
+            mPresenter.setPreviewView(mPreviewFragment);
+            return mPreviewFragment;
         }
 
         @Override

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.csy.fight.R;
+import com.csy.fight.main.IMainContract;
 
 import butterknife.ButterKnife;
 
@@ -17,14 +18,19 @@ import butterknife.ButterKnife;
  * @author chengshengyang
  */
 
-public class MeFragment extends BaseFragment {
+public class MeFragment extends BaseFragment implements IMainContract.IView {
+
+    /**
+     * view必须持有presenter对象实例
+     */
+    protected IMainContract.IPresenter mPresenter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main_4, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        mFragment = inflater.inflate(R.layout.fragment_main_4, container, false);
+        initView();
+        return mFragment;
     }
 
     @Override
@@ -35,15 +41,33 @@ public class MeFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (isAdded()) {
-            mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        setTitle();
+    }
+
+    @Override
+    public void initView() {
+        ButterKnife.bind(this, mFragment);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
             setTitle();
         }
     }
 
     @Override
-    public void initView() {
+    public void setTitle() {
+        mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (isAdded() && mActionBar != null) {
+            mActionBar.setTitle(R.string.home_tab_me);
+        }
+    }
 
+    @Override
+    public void setPresenter(IMainContract.IPresenter presenter) {
+        this.mPresenter = presenter;
     }
 
     @Override
@@ -57,15 +81,6 @@ public class MeFragment extends BaseFragment {
     }
 
     @Override
-    public void setTitle() {
-        if (mActionBar != null) {
-            mActionBar.setTitle(R.string.home_tab_me);
-        }
-    }
-
-
-    @Override
     public void refresh() {
-        super.refresh();
     }
 }

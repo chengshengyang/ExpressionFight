@@ -1,5 +1,6 @@
 package com.csy.fight.main.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.csy.fight.R;
+import com.csy.fight.main.IMainContract;
 
 import butterknife.ButterKnife;
 
@@ -17,14 +19,24 @@ import butterknife.ButterKnife;
  * @author chengshengyang
  */
 
-public class DiscoverFragment extends BaseFragment {
+public class DiscoverFragment extends BaseFragment implements IMainContract.IView {
 
-    @Nullable
+    /**
+     * view必须持有presenter对象实例
+     */
+    protected IMainContract.IPresenter mPresenter;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main_2, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        mFragment = inflater.inflate(R.layout.fragment_main_2, container, false);
+        initView();
+        return mFragment;
     }
 
     @Override
@@ -34,15 +46,33 @@ public class DiscoverFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (isAdded()) {
-            mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            setTitle();
-        }
+        setTitle();
     }
 
     @Override
     public void initView() {
+        ButterKnife.bind(this, mFragment);
+    }
 
+    @Override
+    public void setTitle() {
+        if (isAdded() && mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setTitle(R.string.home_tab_discover);
+        }
+    }
+
+    @Override
+    public void setPresenter(IMainContract.IPresenter presenter) {
+        this.mPresenter = presenter;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            setTitle();
+        }
     }
 
     @Override
@@ -56,14 +86,7 @@ public class DiscoverFragment extends BaseFragment {
     }
 
     @Override
-    public void setTitle() {
-        if (mActionBar != null) {
-            mActionBar.setTitle(R.string.home_tab_discover);
-        }
-    }
-
-    @Override
     public void refresh() {
-        super.refresh();
+
     }
 }

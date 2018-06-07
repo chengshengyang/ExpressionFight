@@ -1,6 +1,6 @@
 package com.csy.fight.main.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,13 +14,11 @@ import android.widget.Toast;
 import com.csy.fight.R;
 import com.csy.fight.data.IImageDataSource;
 import com.csy.fight.entity.AlbumInfo;
+import com.csy.fight.main.IMainContract;
 import com.csy.fight.main.MainActivity;
-import com.csy.fight.main.MainPresenter;
 import com.csy.fight.main.adapter.AlbumAdapter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 展示相册列表的Fragment
@@ -28,13 +26,17 @@ import java.util.Map;
  * @author chengsy
  *
  */
-public class AlbumFragment extends BaseFragment {
+public class AlbumFragment extends BaseFragment implements IMainContract.IView {
 
 	private RecyclerView mRecyclerView;
 	private ProgressBar mProgressBar;
 	private AlbumAdapter mAdapter;
 	private MainActivity mActivity;
 	private AlbumAdapter.OnAlbumItemClickListener mOnAlbumClickListener;
+    /**
+     * view必须持有presenter对象实例
+     */
+    protected IMainContract.IPresenter mPresenter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,9 +45,9 @@ public class AlbumFragment extends BaseFragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		mActivity = (MainActivity) activity;
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		mActivity = (MainActivity) context;
         mActionBar = mActivity.getSupportActionBar();
 		mOnAlbumClickListener = mActivity;
 	}
@@ -131,7 +133,17 @@ public class AlbumFragment extends BaseFragment {
 	}
 
     @Override
+    public void refresh() {
+
+    }
+
+    @Override
     public void showProgress(boolean show) {
         mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setPresenter(IMainContract.IPresenter presenter) {
+        this.mPresenter = presenter;
     }
 }

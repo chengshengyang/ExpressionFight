@@ -124,11 +124,12 @@ public class PreviewFragment extends BaseFragment implements IPreviewContract.IV
     public void startPostponedEnterTransition() {
         if (mCurrentPosition == mStartPosition) {
             mPhotoView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public boolean onPreDraw() {
                     mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
-                    getActivity().startPostponedEnterTransition();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getActivity().startPostponedEnterTransition();
+                    }
                     return true;
                 }
             });

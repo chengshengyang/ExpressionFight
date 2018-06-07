@@ -218,14 +218,17 @@ public class PhotoFragment extends BaseFragment
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onGridItemClick(View view, AlbumInfo albumInfo, int position) {
         Intent intent = new Intent(mActivity, PreviewActivity.class);
         intent.putExtra(PreviewFragment.ARG_ALBUM_INFO, albumInfo);
         intent.putExtra(PreviewFragment.ARG_START_POSITION, position);
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mActivity, view, view.getTransitionName());
-        startActivity(intent, options.toBundle());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mActivity, view, view.getTransitionName());
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivity(intent);
+        }
     }
 
     @Override

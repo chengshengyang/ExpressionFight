@@ -97,9 +97,10 @@ public class PreviewActivity extends AppCompatActivity {
         super.finishAfterTransition();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initShareElement() {
-        postponeEnterTransition();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            postponeEnterTransition();
+        }
         setEnterSharedElementCallback(mCallback);
     }
 

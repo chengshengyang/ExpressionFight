@@ -16,6 +16,8 @@ import android.view.View;
 
 import com.csy.fight.R;
 import com.csy.fight.constant.TagStatic;
+import com.csy.fight.data.ImageRepository;
+import com.csy.fight.data.local.LocalAlbumDataSource;
 import com.csy.fight.entity.AlbumInfo;
 import com.csy.fight.main.adapter.AlbumAdapter;
 import com.csy.fight.main.fragment.AlbumFragment;
@@ -111,7 +113,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        mPresenter = new MainPresenter(getApplicationContext());
+        mPresenter = new MainPresenter(getApplicationContext(),
+                ImageRepository.getInstance(LocalAlbumDataSource.getInstance(getApplicationContext())));
 
         tabItemMain0.performClick();
     }

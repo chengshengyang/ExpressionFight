@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.csy.fight.R;
+import com.csy.fight.data.IImageDataSource;
 import com.csy.fight.entity.AlbumInfo;
 import com.csy.fight.main.MainActivity;
 import com.csy.fight.main.MainPresenter;
@@ -97,17 +98,25 @@ public class AlbumFragment extends BaseFragment {
         mAdapter = new AlbumAdapter(getActivity());
 		mAdapter.setAlbumItemClickListener(mOnAlbumClickListener);
 
-        mPresenter.getLocalDataSource(new MainPresenter.AsyncResponse() {
+        mPresenter.getLocalDataSource(new IImageDataSource.OnAsyncAlbumFinishListener() {
+
             @Override
-            public void onLoadDataSuccess(List<AlbumInfo> list) {
+            public void onPreExecute() {
+                showProgress(true);
+            }
+
+            @Override
+            public void onLoadSuccess(List<AlbumInfo> list) {
                 if (getActivity() != null) {
                     mAdapter.setAlbumList(list);
                     mRecyclerView.setAdapter(mAdapter);
                 }
+                showProgress(false);
             }
 
             @Override
-            public void onLoadDataFailed() {
+            public void onLoadFailed() {
+                showProgress(false);
                 Toast.makeText(mActivity, "数据加载失败", Toast.LENGTH_SHORT).show();
             }
         });

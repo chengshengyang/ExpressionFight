@@ -2,6 +2,7 @@ package com.csy.fight.main;
 
 import com.csy.fight.IBasePresenter;
 import com.csy.fight.IBaseView;
+import com.csy.fight.data.IImageDataSource;
 import com.csy.fight.data.RootEntity;
 import com.csy.fight.entity.AlbumInfo;
 
@@ -45,9 +46,9 @@ public interface IMainContract {
 
         /**
          * 获取本地图片数据源
-         * @return
+         * @param listener
          */
-        List<AlbumInfo> getLocalDataSource(MainPresenter.AsyncResponse asyncResponse);
+        void getLocalDataSource(IImageDataSource.OnAsyncAlbumFinishListener listener);
     }
 
     /**

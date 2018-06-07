@@ -152,6 +152,11 @@ public class ExpressionFragment extends BaseFragment {
         initTabItemSelectedAnimation();
     }
 
+    @Override
+    public void showProgress(boolean show) {
+
+    }
+
     /**
      * 初始化切换分类的动画
      */

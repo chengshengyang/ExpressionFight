@@ -207,4 +207,9 @@ public class PreviewFragment extends BaseFragment {
             return false;
         }
     };
+
+    @Override
+    public void showProgress(boolean show) {
+
+    }
 }

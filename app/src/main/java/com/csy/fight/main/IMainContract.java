@@ -3,6 +3,9 @@ package com.csy.fight.main;
 import com.csy.fight.IBasePresenter;
 import com.csy.fight.IBaseView;
 import com.csy.fight.data.RootEntity;
+import com.csy.fight.entity.AlbumInfo;
+
+import java.util.List;
 
 /**
  * Created by chengshengyang on 2018/1/29.
@@ -39,6 +42,12 @@ public interface IMainContract {
          * @return
          */
         RootEntity getNewest();
+
+        /**
+         * 获取本地图片数据源
+         * @return
+         */
+        List<AlbumInfo> getLocalDataSource(MainPresenter.AsyncResponse asyncResponse);
     }
 
     /**
@@ -64,5 +73,12 @@ public interface IMainContract {
          * 初始化各种事件
          */
         void initEvent();
+
+        /**
+         * 显示进度
+         *
+         * @param show
+         */
+        void showProgress(boolean show);
     }
 }

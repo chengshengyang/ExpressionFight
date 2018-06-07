@@ -182,6 +182,11 @@ public class PhotoFragment extends BaseFragment implements PhotoAdapter.OnGridCl
     }
 
     @Override
+    public void showProgress(boolean show) {
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

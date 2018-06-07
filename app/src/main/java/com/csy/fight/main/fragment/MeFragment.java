@@ -52,6 +52,11 @@ public class MeFragment extends BaseFragment {
     }
 
     @Override
+    public void showProgress(boolean show) {
+
+    }
+
+    @Override
     public void setTitle() {
         if (mActionBar != null) {
             mActionBar.setTitle(R.string.home_tab_me);

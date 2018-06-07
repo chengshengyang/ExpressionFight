@@ -314,14 +314,14 @@ public class MainActivity extends AppCompatActivity
             if (mPhotoFragment == null) {
                 mPhotoFragment = new PhotoFragment();
                 mPhotoFragment.setAlbumInfo(info);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                    mPhotoFragment.setSharedElementEnterTransition(new PhotoTransition());
 //                    mPhotoFragment.setExitTransition(new Fade());
 //                    mPhotoFragment.setEnterTransition(new Fade());
 //                    mPhotoFragment.setSharedElementReturnTransition(new PhotoTransition());
-                }
+//                }
 
-                transaction.addSharedElement(holder.getIv_album(), info.getPhotoList().get(position).getImagePath());
+                transaction.addSharedElement(holder.getIv_album(), info.getPhotoList().get(0).getImagePath());
                 transaction.add(R.id.fragment_content, mPhotoFragment, TagStatic.TAG_FRAGMENT_PHOTO + "");
                 transaction.addToBackStack(null);
             } else {

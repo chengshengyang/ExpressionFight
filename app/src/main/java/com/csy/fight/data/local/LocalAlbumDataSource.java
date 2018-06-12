@@ -26,7 +26,6 @@ public class LocalAlbumDataSource implements IImageDataSource {
     private volatile static LocalAlbumDataSource INSTANCE = null;
 
     private WeakReference<Context> mContextRef;
-    private Map<String, String> mThumbnailList = new HashMap<>();
 
     private LocalAlbumDataSource(Context context) {
         mContextRef = new WeakReference<>(context);
@@ -51,34 +50,6 @@ public class LocalAlbumDataSource implements IImageDataSource {
     }
 
     /**
-     * 读取媒体资源中缩略图资源，以HashMap的方式保存在mThumbnailList中。
-     */
-    private void getThumbnail() {
-        if (mContextRef.get() == null) {
-            return;
-        }
-
-        ContentResolver cr = mContextRef.get().getContentResolver();
-        String[] projection = {MediaStore.Images.Thumbnails._ID, MediaStore.Images.Thumbnails.IMAGE_ID, MediaStore.Images.Thumbnails.DATA};
-        Cursor cursor = cr.query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, projection, null, null, MediaStore.Images.Thumbnails.DATA + " desc ");
-
-        if (cursor != null && cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                int imageId;
-                String imagePath;
-
-                int imageIdColumn = cursor.getColumnIndex(MediaStore.Images.Thumbnails.IMAGE_ID);
-                int dataColumn = cursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA);
-
-                imageId = cursor.getInt(imageIdColumn);
-                imagePath = cursor.getString(dataColumn);
-
-                mThumbnailList.put("" + imageId, imagePath);
-            }
-        }
-    }
-
-    /**
      * 异步构建相册数据
      *
      * @author chengsy
@@ -99,8 +70,6 @@ public class LocalAlbumDataSource implements IImageDataSource {
 
         @Override
         protected List<AlbumInfo> doInBackground(Void... params) {
-            getThumbnail();
-
             if (mContextRef.get() == null) {
                 return null;
             }
@@ -109,7 +78,7 @@ public class LocalAlbumDataSource implements IImageDataSource {
             String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.BUCKET_ID, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.DATA};
             Cursor cursor = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, MediaStore.Images.Media.DATE_MODIFIED + " desc ");
 
-            List<AlbumInfo> albumInfos = new ArrayList<>();
+            List<AlbumInfo> albumInfoList = new ArrayList<>();
             if (cursor != null && cursor.getCount() > 0) {
                 Map<String, AlbumInfo> idMap = new HashMap<>();
                 while (cursor.moveToNext()) {
@@ -120,7 +89,7 @@ public class LocalAlbumDataSource implements IImageDataSource {
                     String sPath = cursor.getString(3);
 
                     pInfo.setImageID(sId);
-                    pInfo.setThumbnailPath(mThumbnailList.get(sId));
+                    pInfo.setThumbnailPath(sPath);
                     pInfo.setImagePath(sPath);
                     pInfo.setImageURI("file://" + sPath);
 
@@ -137,13 +106,13 @@ public class LocalAlbumDataSource implements IImageDataSource {
                         AlbumInfo aInfo = new AlbumInfo();
                         aInfo.setAlbumName(sName);
                         aInfo.setPhotoList(mPhotoList);
-                        albumInfos.add(aInfo);
+                        albumInfoList.add(aInfo);
 
                         idMap.put(sBuckId, aInfo);
                     }
                 }
             }
-            return albumInfos;
+            return albumInfoList;
         }
 
         @Override

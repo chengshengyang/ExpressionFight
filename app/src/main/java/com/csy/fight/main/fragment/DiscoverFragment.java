@@ -10,8 +10,12 @@ import android.view.ViewGroup;
 
 import com.csy.fight.R;
 import com.csy.fight.main.IMainContract;
+import com.csy.fight.view.CommonItem;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by chengshengyang on 2018/1/29.
@@ -25,6 +29,9 @@ public class DiscoverFragment extends BaseFragment implements IMainContract.IVie
      * view必须持有presenter对象实例
      */
     protected IMainContract.IPresenter mPresenter;
+    @BindView(R.id.item_home)
+    CommonItem itemHome;
+    Unbinder unbinder;
 
     @Override
     public void onAttach(Context context) {
@@ -43,6 +50,7 @@ public class DiscoverFragment extends BaseFragment implements IMainContract.IVie
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -51,7 +59,7 @@ public class DiscoverFragment extends BaseFragment implements IMainContract.IVie
 
     @Override
     public void initView() {
-        ButterKnife.bind(this, mFragment);
+        unbinder = ButterKnife.bind(this, mFragment);
     }
 
     @Override
@@ -88,5 +96,15 @@ public class DiscoverFragment extends BaseFragment implements IMainContract.IVie
     @Override
     public void refresh() {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @OnClick(R.id.item_home)
+    public void onViewClicked() {
     }
 }

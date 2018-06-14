@@ -8,6 +8,7 @@ import com.csy.fight.http.LoggerInterceptor;
 import com.csy.fight.http.NullOrEmptyConverterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mob.MobSDK;
 
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +49,9 @@ public class ExpressionFightApplication extends Application {
 
         mApplication = this;
         initRetrofit();
+
+        // 初始化shareSDK
+        MobSDK.init(this);
     }
 
     public static synchronized ExpressionFightApplication getInstance() {

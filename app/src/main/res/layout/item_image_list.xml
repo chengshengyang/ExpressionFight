@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_margin="3dp"
     android:background="@drawable/selector_listview_item"
+    android:layout_marginBottom="@dimen/line_height_1"
     android:gravity="center_vertical|left" >
     
     <ImageView
@@ -19,7 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/littleMargin"
         android:orientation="vertical"
         android:gravity="center_vertical">
         
@@ -30,7 +30,7 @@
         <TextView 
             android:id="@+id/album_count_tv"
             style="@style/middleBlackText"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="@dimen/basicMargin"
             android:textColor="@color/lightgrey"/>
     </LinearLayout>
 </LinearLayout>

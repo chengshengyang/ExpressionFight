@@ -1,6 +1,5 @@
 package com.csy.fight.preview;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;

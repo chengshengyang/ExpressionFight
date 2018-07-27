@@ -12,10 +12,20 @@ public interface IImageDataSource {
 
     interface OnAsyncAlbumFinishListener {
 
+        /**
+         * 执行前的准备操作
+         */
         void onPreExecute();
 
+        /**
+         * 加载成功
+         * @param list
+         */
         void onLoadSuccess(List<AlbumInfo> list);
 
+        /**
+         * 加载失败
+         */
         void onLoadFailed();
     }
 

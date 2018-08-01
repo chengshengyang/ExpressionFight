@@ -20,7 +20,7 @@ android {
             try {
                 storeFile file('ExpressionFight.jks')
                 storePassword KEYSTORE_PASSWORD
-                keyAlias "galaxy"
+                keyAlias "expression"
                 keyPassword KEY_PASSWORD
             } catch (Exception e) {
                 throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")

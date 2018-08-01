@@ -12,13 +12,90 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        flavorDimensions "releaseChannal"
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            try {
+                storeFile file('ExpressionFight.jks')
+                storePassword KEYSTORE_PASSWORD
+                keyAlias "galaxy"
+                keyPassword KEY_PASSWORD
+            } catch (Exception e) {
+                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+            }
         }
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            manifestPlaceholders = [DEBUG_FLAG: false]
+            signingConfig signingConfigs.release
+            proguardFiles 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled false // 混淆开关
+            shrinkResources false // 去除无效资源文件开关
+            proguardFiles 'proguard-rules.pro' // 混淆规则文件
+            manifestPlaceholders = [DEBUG_FLAG: true]
+            signingConfig signingConfigs.release
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            if (variant.buildType.name != "debug") {
+                output.outputFileName = "${defaultConfig.versionName}." +
+                        "release${releaseTime()}_${productFlavors.manifestPlaceholders.RELEASE_CHANNEL_VALUE}.apk"
+            }
+        }
+    }
+
+    // 多渠道打包配置
+    productFlavors {
+        expression {
+            dimension "releaseChannal"
+        }
+
+        fight {
+            dimension "releaseChannal"
+        }
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [RELEASE_CHANNEL_VALUE: name]
+    }
+
+    // 移除lint检查的error
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'MissingTranslation', 'ExtraTranslation'
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("GMT+8"))
 }
 
 dependencies {

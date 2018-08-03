@@ -15,8 +15,11 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.csy.fight.R;
 import com.csy.fight.entity.AlbumInfo;
@@ -138,7 +141,7 @@ public class PreviewFragment extends BaseFragment implements IPreviewContract.IV
     RequestListener mRequestListener = new RequestListener() {
 
         @Override
-        public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+        public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
             Log.d(TAG, "onException: " + e.toString() + "  \nmodel:" + model
                     + " isFirstResource: " + isFirstResource);
             return false;
@@ -146,11 +149,11 @@ public class PreviewFragment extends BaseFragment implements IPreviewContract.IV
 
         @Override
         public boolean onResourceReady(Object resource, Object model, Target target,
-                                       boolean isFromMemoryCache, boolean isFirstResource) {
+                                       DataSource dataSource, boolean isFirstResource) {
             startPostponedEnterTransition();
 
             Log.e(TAG, "Ready: isFirstResource: " + isFirstResource
-                    + ", isFromMemoryCache: " + isFromMemoryCache + ", ||| \nmodel:" + model);
+                    + ", isFromMemoryCache: " + dataSource.name() + ", ||| \nmodel:" + model);
             return false;
         }
     };
@@ -175,15 +178,17 @@ public class PreviewFragment extends BaseFragment implements IPreviewContract.IV
             mPhotoView.setTransitionName(imagePath);
         }
 
-        Glide.with(mContext)
-                .load(imagePath)
+        RequestOptions options = new RequestOptions()
                 .fitCenter()
-                .dontAnimate()
                 .skipMemoryCache(false)
-                .listener(mRequestListener)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.ic_invoice_loading)
-                .error(R.drawable.ic_invoice_loading_error)
+                .error(R.drawable.ic_invoice_loading_error);
+
+        Glide.with(mContext)
+                .load(imagePath)
+                .listener(mRequestListener)
+                .apply(options)
                 .into(mPhotoView);
 
         if (mStartPosition == mCurrentPosition) {

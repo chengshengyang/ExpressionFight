@@ -14,8 +14,11 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.csy.fight.R;
 import com.csy.fight.entity.AlbumInfo;
@@ -109,20 +112,23 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         return holder;
     }
 
+    RequestOptions options = new RequestOptions()
+            .centerCrop()
+            .skipMemoryCache(false)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .placeholder(R.drawable.ic_invoice_loading)
+            .error(R.drawable.ic_invoice_loading_error);
+
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final PhotoInfo photoInfo = mPhotoList.get(position);
         if (photoInfo != null) {
             String sourcePath = photoInfo.getImagePath();
             Glide.with(mContext)
-                    .load(sourcePath)
                     .asBitmap()
-                    .centerCrop()
+                    .load(sourcePath)
                     .listener(mRequestListener)
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.ic_invoice_loading)
-                    .error(R.drawable.ic_invoice_loading_error)
+                    .apply(options)
                     .into(holder.ivPhoto);
 
             if (sourcePath.endsWith(".gif")) {
@@ -162,7 +168,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
     RequestListener mRequestListener = new RequestListener() {
 
         @Override
-        public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+        public boolean onLoadFailed(GlideException e, Object model, Target target, boolean isFirstResource) {
             Log.d(TAG, "onException: " + e.toString() + "  \nmodel:" + model
                     + " isFirstResource: " + isFirstResource);
             return false;
@@ -170,9 +176,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
         @Override
         public boolean onResourceReady(Object resource, Object model, Target target,
-                                       boolean isFromMemoryCache, boolean isFirstResource) {
+                                       DataSource dataSource, boolean isFirstResource) {
             Log.e(TAG, "Ready: isFirstResource: " + isFirstResource
-                    + ", isFromMemoryCache: " + isFromMemoryCache + ", ||| \nmodel:" + model);
+                    + ", isFromMemoryCache: " + dataSource.name() + ", ||| \nmodel:" + model);
             return false;
         }
     };

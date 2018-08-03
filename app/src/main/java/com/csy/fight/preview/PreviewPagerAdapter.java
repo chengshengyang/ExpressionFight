@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
@@ -14,11 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.csy.fight.R;
 import com.csy.fight.entity.AlbumInfo;
@@ -87,20 +88,27 @@ public class PreviewPagerAdapter extends PagerAdapter {
     RequestListener mRequestListener = new RequestListener() {
 
         @Override
-        public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
             Log.d(TAG, "onException: " + e.toString() + "  \nmodel:" + model
                     + " isFirstResource: " + isFirstResource);
             return false;
         }
 
         @Override
-        public boolean onResourceReady(Object resource, Object model, Target target,
-                                       boolean isFromMemoryCache, boolean isFirstResource) {
+        public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
             Log.e(TAG, "Ready: isFirstResource: " + isFirstResource
-                    + ", isFromMemoryCache: " + isFromMemoryCache + ", ||| \nmodel:" + model);
+                    + ", isFromMemoryCache: " + dataSource.name() + ", ||| \nmodel:" + model);
             return false;
         }
     };
+
+    RequestOptions options = new RequestOptions()
+            .fitCenter()
+            .dontAnimate()
+            .skipMemoryCache(false)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .placeholder(R.drawable.ic_invoice_loading)
+            .error(R.drawable.ic_invoice_loading_error);
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @NonNull
@@ -136,32 +144,16 @@ public class PreviewPagerAdapter extends PagerAdapter {
     private void loadFullSizeImage(String filePath) {
         Glide.with(mContext)
                 .load(filePath)
-                .fitCenter()
-                .dontAnimate()
                 .listener(mRequestListener)
-                .skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.drawable.ic_invoice_loading)
-                .error(R.drawable.ic_invoice_loading_error)
-                .into(new SimpleTarget() {
-                    @Override
-                    public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
-                        photoView.setImageDrawable((GlideDrawable) resource);
-                    }
-                });
+                .apply(options)
+                .into(photoView);
     }
 
     private void loadThumbnailImage(String filePath) {
         Glide.with(mContext)
                 .load(filePath)
-                .asBitmap()
-                .centerCrop()
                 .listener(mRequestListener)
-                .skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.drawable.ic_invoice_loading)
-                .error(R.drawable.ic_invoice_loading_error)
+                .apply(options)
                 .into(photoView);
     }
-
 }

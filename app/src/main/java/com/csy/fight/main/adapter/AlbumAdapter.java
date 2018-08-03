@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.csy.fight.R;
 import com.csy.fight.entity.AlbumInfo;
 import com.csy.fight.entity.PhotoInfo;
@@ -67,6 +68,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
+    RequestOptions options = new RequestOptions()
+            .centerCrop()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .placeholder(R.drawable.ic_invoice_loading)
+            .error(R.drawable.ic_invoice_loading_error)
+            .override(65, 65);
+
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final AlbumInfo aInfo = mAlbumList.get(position);
@@ -78,12 +86,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
         Glide.with(mContext)
                 .load(pInfo.getImagePath())
-                .skipMemoryCache(false)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.drawable.ic_invoice_loading)
-                .error(R.drawable.ic_invoice_loading_error)
-                .override(65, 65)
+                .apply(options)
                 .into(holder.iv_album);
 
         holder.tv_name.setText(aInfo.getAlbumName());

@@ -138,7 +138,6 @@ public class PreviewActivity extends AppCompatActivity {
         //oks.setTitleUrl("http://sharesdk.cn");
         // text是分享文本，所有平台都需要这个字段
         //oks.setText("我是分享文本");
-        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
         oks.setImagePath(mAlbumInfo.getPhotoList().get(mCurrentPosition).getImagePath());
         // url在微信、微博，Facebook等平台中使用
         // oks.setUrl("http://sharesdk.cn");

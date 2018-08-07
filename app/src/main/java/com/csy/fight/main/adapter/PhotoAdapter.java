@@ -178,7 +178,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         public boolean onResourceReady(Object resource, Object model, Target target,
                                        DataSource dataSource, boolean isFirstResource) {
             Log.e(TAG, "Ready: isFirstResource: " + isFirstResource
-                    + ", isFromMemoryCache: " + dataSource.name() + ", ||| \nmodel:" + model);
+                    + ", data source: " + dataSource.name() + ", ||| \nmodel:" + model);
             return false;
         }
     };

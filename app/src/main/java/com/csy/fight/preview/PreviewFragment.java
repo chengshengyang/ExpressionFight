@@ -153,7 +153,7 @@ public class PreviewFragment extends BaseFragment implements IPreviewContract.IV
             startPostponedEnterTransition();
 
             Log.e(TAG, "Ready: isFirstResource: " + isFirstResource
-                    + ", isFromMemoryCache: " + dataSource.name() + ", ||| \nmodel:" + model);
+                    + ", data source: " + dataSource.name() + ", ||| \nmodel:" + model);
             return false;
         }
     };

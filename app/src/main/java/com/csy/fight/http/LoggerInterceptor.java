@@ -20,7 +20,7 @@ import okio.Buffer;
  * 输出Http请求的具体信息
  */
 public class LoggerInterceptor implements Interceptor {
-    public static final String TAG = "DBenPos";
+    public static final String TAG = "ExpressionFight";
     private String tag;
     private boolean showResponse;
 

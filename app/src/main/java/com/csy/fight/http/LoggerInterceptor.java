@@ -54,8 +54,9 @@ public class LoggerInterceptor implements Interceptor {
                 Log.d(tag, "url : " + clone.request().url());
                 Log.d(tag, "code : " + clone.code());
                 Log.d(tag, "protocol : " + clone.protocol());
-                if (!TextUtils.isEmpty(clone.message()))
+                if (!TextUtils.isEmpty(clone.message())) {
                     Log.d(tag, "message : " + clone.message());
+                }
 
                 ResponseBody body = clone.body();
                 if (body != null) {

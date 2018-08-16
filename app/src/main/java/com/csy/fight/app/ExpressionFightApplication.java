@@ -27,7 +27,7 @@ public class ExpressionFightApplication extends Application {
     /**
      * 测试服务器地址
      */
-    public static final String BASE_URL = "http://192.168.4.154:8080/demo/";
+    public static final String BASE_URL = "http://192.168.4.164:8080/demo/";
     /**
      * Http请求响应超时时间10秒
      */
@@ -62,10 +62,6 @@ public class ExpressionFightApplication extends Application {
      * 初始化Retrofit2
      */
     public void initRetrofit() {
-        //checkUserIdAndToken();
-
-        //LoggerInterceptor是打印log
-        //TokenInterceptor为每次请求都添加token
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new LoggerInterceptor(TagStatic.TAG_LOGGER, mIsDebug))
                 //.addInterceptor(new TokenInterceptor(sToken, sUserId))
@@ -78,10 +74,10 @@ public class ExpressionFightApplication extends Application {
                 .create();
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) //添加Rxjava
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(new NullOrEmptyConverterFactory())
-                .addConverterFactory(GsonConverterFactory.create(gson))//解析方法
-                .baseUrl(BASE_URL)//主机地址
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .baseUrl(BASE_URL)
                 .build();
         mHttpService = retrofit.create(HttpService.class);
     }

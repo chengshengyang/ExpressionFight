@@ -26,6 +26,7 @@ import com.csy.fight.main.fragment.ExpressionFragment;
 import com.csy.fight.main.fragment.MeFragment;
 import com.csy.fight.main.fragment.MessageFragment;
 import com.csy.fight.main.fragment.PhotoFragment;
+import com.csy.fight.util.JavaTest;
 import com.csy.fight.widget.TabItem;
 
 import java.util.List;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity
 
         initSharedElementCallback();
         initViews();
+        new JavaTest();
     }
 
     @Override

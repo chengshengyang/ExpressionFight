@@ -26,7 +26,6 @@ import com.csy.fight.main.fragment.ExpressionFragment;
 import com.csy.fight.main.fragment.MeFragment;
 import com.csy.fight.main.fragment.MessageFragment;
 import com.csy.fight.main.fragment.PhotoFragment;
-import com.csy.fight.util.JavaTest;
 import com.csy.fight.widget.TabItem;
 
 import java.util.List;
@@ -42,7 +41,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements AlbumAdapter.OnAlbumItemClickListener {
 
-    private final static String TAG = "MainActivity";
+    private final static String TAG = MainActivity.class.getSimpleName();
 
     @BindView(R.id.tab_item_main_0)
     TabItem tabItemMain0;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
         initSharedElementCallback();
         initViews();
-        new JavaTest();
+        //new JavaTest();
     }
 
     @Override
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         switch (view.getId()) {
             case R.id.tab_item_main_0:
                 tabItemMain0.setChecked(true);
-                showFragment(TagStatic.TAG_FRAGMENT_ALBUM);
+                showFragment(TagStatic.TAG_FRAGMENT_HOME_PAGE);
                 break;
 
             case R.id.tab_item_main_1:

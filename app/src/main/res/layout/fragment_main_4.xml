@@ -1,11 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="main tab 4"/>
-</FrameLayout>
+        android:orientation="vertical">
+
+        <com.csy.fight.view.CommonItem
+            android:id="@+id/item_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/smallMargin"
+            android:layout_marginBottom="@dimen/smallMargin"
+            android:layout_gravity="center"
+            android:src="@drawable/main_ic_home_normal"
+            android:text="Home" />
+
+        <com.csy.fight.view.CommonItem
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/main_ic_discover_normal"
+            android:text="Discover" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_height_1"
+            android:background="@color/white">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height_1"
+                android:layout_marginLeft="@dimen/littleMargin"
+                android:background="@color/moments_tab_normal" />
+        </FrameLayout>
+
+        <com.csy.fight.view.CommonItem
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/main_ic_message_normal"
+            android:text="Message" />
+
+        <com.csy.fight.view.CommonItem
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/smallMargin"
+            android:layout_marginTop="@dimen/smallMargin"
+            android:src="@drawable/main_ic_me_normal"
+            android:text="Me" />
+
+        <com.csy.fight.view.CommonItem
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/main_ic_me_normal"
+            android:text="Others" />
+    </LinearLayout>
+</ScrollView>

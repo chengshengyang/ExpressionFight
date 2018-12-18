@@ -1,62 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tl_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:tabTextColor="@color/littlegray"
+        app:tabSelectedTextColor="@color/textwhite"
+        android:background="@color/colorPrimary">
 
-        <com.csy.fight.view.CommonItem
-            android:id="@+id/item_home"
+        <android.support.design.widget.TabItem
+            android:id="@+id/ti_choiceness"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/smallMargin"
-            android:layout_marginBottom="@dimen/smallMargin"
-            android:layout_gravity="center"
-            android:src="@drawable/main_ic_home_normal"
-            android:text="Home" />
+            android:layout_height="wrap_content"
+            android:text="精选" />
 
-        <com.csy.fight.view.CommonItem
+        <android.support.design.widget.TabItem
+            android:id="@+id/ti_hot"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:src="@drawable/main_ic_discover_normal"
-            android:text="Discover" />
+            android:layout_height="wrap_content"
+            android:text="热门" />
 
-        <FrameLayout
+        <android.support.design.widget.TabItem
+            android:id="@+id/ti_newest"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height_1"
-            android:background="@color/white">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/line_height_1"
-                android:layout_marginLeft="@dimen/littleMargin"
-                android:background="@color/moments_tab_normal" />
-        </FrameLayout>
+            android:layout_height="wrap_content"
+            android:text="最新" />
 
-        <com.csy.fight.view.CommonItem
+        <android.support.design.widget.TabItem
+            android:id="@+id/ti_personage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:src="@drawable/main_ic_message_normal"
-            android:text="Message" />
+            android:layout_height="wrap_content"
+            android:text="人物" />
+    </android.support.design.widget.TabLayout>
 
-        <com.csy.fight.view.CommonItem
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/smallMargin"
-            android:layout_marginTop="@dimen/smallMargin"
-            android:src="@drawable/main_ic_me_normal"
-            android:text="Me" />
-
-        <com.csy.fight.view.CommonItem
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:src="@drawable/main_ic_me_normal"
-            android:text="Others" />
-    </LinearLayout>
-</ScrollView>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tl_top" />
+</RelativeLayout>

@@ -6,7 +6,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/common_top_tab_height"
+        android:layout_height="?android:actionBarSize"
         android:background="@color/white">
 
         <TextView

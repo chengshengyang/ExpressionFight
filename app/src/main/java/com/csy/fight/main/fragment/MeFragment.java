@@ -61,6 +61,7 @@ public class MeFragment extends BaseFragment implements IMainContract.IView {
     public void setTitle() {
         mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (isAdded() && mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(false);
             mActionBar.setTitle(R.string.home_tab_me);
         }
     }

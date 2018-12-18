@@ -1,31 +1,28 @@
 package com.csy.fight.main.fragment;
 
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.csy.fight.R;
 import com.csy.fight.main.IMainContract;
-import com.csy.fight.main.adapter.HomePageAdapter;
-import com.csy.fight.util.DeviceUtils;
+import com.csy.fight.main.OnLoadMoreListener;
+import com.csy.fight.main.adapter.MyAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by chengshengyang on 2018/1/29.
@@ -35,25 +32,16 @@ import butterknife.OnClick;
 
 public class ExpressionFragment extends BaseFragment implements IMainContract.IView {
 
-    @BindView(R.id.top_tab_1)
-    TextView mTopTab1;
-    @BindView(R.id.top_tab_2)
-    TextView mTopTab2;
-    @BindView(R.id.top_tab_3)
-    TextView mTopTab3;
-    @BindView(R.id.top_tab_4)
-    TextView mTopTab4;
-    @BindView(R.id.linearLayout)
-    LinearLayout mLinearLayout;
-    @BindView(R.id.scrollbar)
-    ImageView mScrollbar;
-    @BindView(R.id.viewPager)
-    ViewPager mViewPager;
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private List<View> mPageList;
-    private HomePageAdapter mHomePageAdapter;
-    /** 当前页编号 */
-    private int currIndex = 0;
+    private MyAdapter myAdapter;
+    private StaggeredGridLayoutManager recyclerViewLayoutManager;
+    private Handler handler;
+    private List<Integer> listData = new ArrayList<>();
+    private int count = 0;
 
     /**
      * view必须持有presenter对象实例
@@ -64,7 +52,7 @@ public class ExpressionFragment extends BaseFragment implements IMainContract.IV
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main_1, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_expression, container, false);
         ButterKnife.bind(this, view);
 
         initView();
@@ -89,6 +77,7 @@ public class ExpressionFragment extends BaseFragment implements IMainContract.IV
     @Override
     public void setTitle() {
         mActionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(false);
         if (mActionBar != null) {
             mActionBar.setTitle(R.string.home_tab_expression);
         }
@@ -97,6 +86,14 @@ public class ExpressionFragment extends BaseFragment implements IMainContract.IV
     @Override
     public void refresh() {
 
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            setTitle();
+        }
     }
 
     @Override
@@ -109,53 +106,59 @@ public class ExpressionFragment extends BaseFragment implements IMainContract.IV
         super.onDestroy();
     }
 
-    @OnClick({R.id.top_tab_1, R.id.top_tab_2, R.id.top_tab_3, R.id.top_tab_4})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.top_tab_1:
-                currIndex = 0;
-                setCurrPage();
-                break;
-            case R.id.top_tab_2:
-                currIndex = 1;
-                setCurrPage();
-                break;
-            case R.id.top_tab_3:
-                currIndex = 2;
-                setCurrPage();
-                break;
-            case R.id.top_tab_4:
-                currIndex = 3;
-                setCurrPage();
-                break;
-            default:
-                break;
-        }
-    }
-
     @Override
     public void initView() {
-        //查找布局文件用LayoutInflater.inflate
-        LayoutInflater inflater = getLayoutInflater();
-        View viewChoiceness = inflater.inflate(R.layout.view_home_page_choiceness, null);
-        View viewHot = inflater.inflate(R.layout.view_home_page_hot, null);
-        View viewNewest = inflater.inflate(R.layout.view_home_page_newest, null);
-        View viewPersonage = inflater.inflate(R.layout.view_home_page_personage, null);
+        myAdapter = new MyAdapter(getActivity(), listData);
+        handler = new Handler();
+        recyclerViewLayoutManager = new StaggeredGridLayoutManager(
+                2, StaggeredGridLayoutManager.VERTICAL);
 
-        mPageList = new ArrayList<>();
-        mPageList.add(viewChoiceness);
-        mPageList.add(viewHot);
-        mPageList.add(viewNewest);
-        mPageList.add(viewPersonage);
+        mRecyclerView.setLayoutManager(recyclerViewLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(myAdapter);
     }
 
     @Override
     public void initEvent() {
-        mHomePageAdapter = new HomePageAdapter(mPageList);
-        mViewPager.setAdapter(mHomePageAdapter);
-        mViewPager.setCurrentItem(0);
+        //下拉刷新的圆圈是否显示
+        mSwipeRefreshLayout.setRefreshing(false);
 
-        initTabItemSelectedAnimation();
+        //设置下拉时圆圈的颜色（可以由多种颜色拼成）
+        mSwipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_red_light,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light);
+
+        //设置下拉时圆圈的背景颜色（这里设置成白色）
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(android.R.color.white);
+
+        //设置下拉刷新时的操作
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //具体操作
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getData("refresh");
+                    }
+                }, 3000);
+            }
+        });
+
+        mRecyclerView.addOnScrollListener(new OnLoadMoreListener() {
+            @Override
+            protected void onLoading(int countItem, int lastItem) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getData("loadMore");
+                    }
+                }, 3000);
+            }
+        });
+
+        getData("reset");
     }
 
     @Override
@@ -163,58 +166,35 @@ public class ExpressionFragment extends BaseFragment implements IMainContract.IV
 
     }
 
-    /**
-     * 初始化切换分类的动画
-     */
-    private void initTabItemSelectedAnimation() {
-        int screenW = DeviceUtils.getScreenWidth(getContext());
-        // 滚动条宽度
-        int bmpW = BitmapFactory.decodeResource(getResources(), R.drawable.ic_scroll_line).getWidth();
-        // 滚动条初始偏移量
-        int offset = (screenW / 4 - bmpW) / 2;
-        // scrollbar的一倍滚动量
-        final int one = offset * 2 + bmpW;
-        Matrix matrix = new Matrix();
-        // 将滚动条的初始位置设置成与左边界间隔一个offset
-        matrix.postTranslate(offset, 0);
-        mScrollbar.setImageMatrix(matrix);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                /**
-                 * TranslateAnimation的四个属性分别为
-                 * float fromXDelta 动画开始的点离当前View X坐标上的差值
-                 * float toXDelta 动画结束的点离当前View X坐标上的差值
-                 * float fromYDelta 动画开始的点离当前View Y坐标上的差值
-                 * float toYDelta 动画开始的点离当前View Y坐标上的差值
-                 **/
-                Animation animation = new TranslateAnimation(one * currIndex,
-                        one * position, 0, 0);
-                currIndex = position;
-                // 将此属性设置为true可以使得图片停在动画结束时的位置
-                animation.setFillAfter(true);
-                animation.setDuration(300);
-                mScrollbar.startAnimation(animation);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-    }
-
-    private void setCurrPage() {
-        mViewPager.setCurrentItem(currIndex);
-    }
-
     @Override
     public void setPresenter(IMainContract.IPresenter presenter) {
         this.mPresenter = presenter;
+    }
+
+    private void getData(final String type) {
+        if ("refresh".equals(type)) {
+            listData.clear();
+            count = 0;
+            for (int i = 0; i < 20; i++) {
+                count += 1;
+                listData.add(count);
+            }
+        } else {
+            for (int i = 0; i < 20; i++) {
+                count += 1;
+                listData.add(count);
+            }
+        }
+
+        myAdapter.notifyDataSetChanged();
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+
+        if ("refresh".equals(type)) {
+            Toast.makeText(getActivity(), "刷新完毕", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "加载完毕", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/main_selector_notice"
+            android:visibility="gone"
             app:tab_item_count="1"
             app:tab_item_label="消息" />
 
